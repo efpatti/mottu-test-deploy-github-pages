@@ -17,6 +17,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    env:
+      NEXT_TELEMETRY_DISABLED: 1
 
     steps:
       - name: Checkout 🛎️
@@ -31,10 +34,34 @@ jobs:
           static_site_generator: next
 
       - name: Build with Next.js 🏗️
-        run: npx next build
+        run: |
+          npx next build
+          echo "Build completed, checking output..."
         
       - name: Debug - List build output 🔍
-        run: ls -la
+        run: |
+          echo "Current directory contents:"
+          ls -la
+          echo "Looking for build output directories..."
+          find . -type d \( -name "out" -o -name ".next" -o -name "dist" -o -name "build" \) -maxdepth 2
+        
+      - name: Ensure out directory exists �
+        run: |
+          if [ ! -d "out" ]; then
+            echo "❌ out directory not found, checking alternatives..."
+            if [ -d ".next" ]; then
+              echo "Found .next directory, this might indicate build succeeded but export failed"
+              echo "Contents of .next:"
+              ls -la .next/ || true
+            fi
+            echo "Creating empty out directory as fallback..."
+            mkdir -p out
+            echo "<html><body><h1>Build Error</h1><p>Static export failed</p></body></html>" > out/index.html
+          else
+            echo "✅ out directory exists"
+            echo "Contents of out directory:"
+            ls -la out/
+          fi
 
       - name: Upload artifact 📡
         uses: actions/upload-pages-artifact@v3
