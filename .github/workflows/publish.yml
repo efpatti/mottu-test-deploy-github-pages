@@ -33,10 +33,11 @@ jobs:
         with:
           static_site_generator: next
 
-      - name: Build with Next.js 🏗️
+      - name: Build and Export with Next.js 🏗️
         run: |
           npx next build
-          echo "Build completed, checking output..."
+          npx next export
+          echo "Build and export completed, checking output..."
         
       - name: Debug - List build output 🔍
         run: |
