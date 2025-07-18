@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
  reactStrictMode: true,
  trailingSlash: true,
  images: {
-   unoptimized: true,
+  unoptimized: true,
  },
  // Only add basePath if deploying to GitHub Pages under a repository name
  // For GitHub Pages user/org sites, leave this commented out
